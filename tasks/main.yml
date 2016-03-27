@@ -1,0 +1,33 @@
+---
+
+- name: Install redis
+  apt:
+    pkg: redis-server
+    state: present
+
+- name: Ensure config dir exists
+  file:
+    path: '/etc/redis/conf.d'
+    state: directory
+    recurse: true
+
+- name: Add journaling config
+  copy:
+    src: 'journaling.conf'
+    dest: '/etc/redis/conf.d/journaling.conf'
+
+- name: Enable redis persistence
+  lineinfile:
+    dest: /etc/redis/redis.conf
+    regexp: '^include /etc/redis/conf.d/journaling.conf'
+    line: 'include /etc/redis/conf.d/journaling.conf'
+    state: "{{ 'present' if redis_enable_persistence == true else 'absent' }}"
+
+- name: Schedule background append rewriting
+  cron:
+    name: 'Schedule background append rewriting'
+    minute: '*/5'
+    user: root
+    cron_file: 'redis'
+    job: '/usr/bin/redis-cli bgrewriteaof > /dev/null 2>&1'
+  when: redis_scheduled_rewriting
