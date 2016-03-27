@@ -69,9 +69,6 @@ script:
   # Check if redis is reachable
   - redis-cli --version
 
-  # Check if redis is running
-  - service redis-server status | grep 'active (running)'
-
 after_failure:
   - sudo service redis-server status
   - ansible --version

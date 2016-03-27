@@ -13,8 +13,8 @@ ansible 1.7+
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
 ```
-nginx_package: nginx-full
-nginx_package_state: 'latest'
+redis_enable_persistence: true
+redis_scheduled_rewriting: true
 ```
 
 
