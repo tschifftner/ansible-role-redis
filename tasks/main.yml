@@ -12,18 +12,16 @@
     path: '/etc/redis/conf.d'
     state: directory
     recurse: true
+    owner: redis
+    group: redis
 
-- name: Add journaling config
-  copy:
-    src: 'journaling.conf'
-    dest: '/etc/redis/conf.d/journaling.conf'
-
-- name: Enable redis persistence
-  lineinfile:
-    dest: /etc/redis/redis.conf
-    regexp: '^include /etc/redis/conf.d/journaling.conf'
-    line: 'include /etc/redis/conf.d/journaling.conf'
-    state: "{{ 'present' if redis_enable_persistence == true else 'absent' }}"
+- name: Add redis config
+  template:
+    src: 'redis.conf'
+    dest: '/etc/redis/redis.conf'
+    owner: redis
+    group: redis
+    mode: 0600
 
 - name: Schedule background append rewriting
   cron:
