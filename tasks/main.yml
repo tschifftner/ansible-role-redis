@@ -1,9 +1,10 @@
 ---
 
-- name: Install redis
+- name: Install redis required apt packages
   apt:
-    pkg: redis-server
+    pkg: '{{ item }}'
     state: present
+  with_items: '{{ redis_apt_required_packages }}'
 
 - name: Ensure config dir exists
   file:

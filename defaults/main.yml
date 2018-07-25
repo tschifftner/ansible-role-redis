@@ -3,3 +3,7 @@
 redis_enable_persistence: true
 
 redis_scheduled_rewriting: true
+
+redis_apt_required_packages:
+  - cron
+  - redis-server
