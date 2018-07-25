@@ -4,6 +4,7 @@
   apt:
     pkg: '{{ item }}'
     state: present
+    cache_valid_time: 86400
   with_items: '{{ redis_apt_required_packages }}'
 
 - name: Ensure config dir exists
@@ -32,3 +33,9 @@
     cron_file: 'redis'
     job: '/usr/bin/redis-cli bgrewriteaof > /dev/null 2>&1'
   when: redis_scheduled_rewriting
+
+- name: Set startup settings and start redis-server
+  service:
+    name: redis-server
+    state: started
+    enabled: "{{ redis_enabled_on_startup }}"
