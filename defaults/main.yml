@@ -1,5 +1,15 @@
 ---
 
-redis_enable_persistence: true
+redis_appendonly: 'yes'
+redis_appendfsync: 'everysec'
+redis_protected_mode: 'yes'
+redis_bind: '127.0.0.1 ::1'
+redis_port: 6379
 
+redis_enabled_on_startup: true
+redis_enable_persistence: true
 redis_scheduled_rewriting: true
+
+redis_apt_required_packages:
+  - cron
+  - redis-server

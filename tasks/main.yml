@@ -1,27 +1,27 @@
 ---
 
-- name: Install redis
+- name: Install redis required apt packages
   apt:
-    pkg: redis-server
+    pkg: '{{ item }}'
     state: present
+    cache_valid_time: 86400
+  with_items: '{{ redis_apt_required_packages }}'
 
 - name: Ensure config dir exists
   file:
     path: '/etc/redis/conf.d'
     state: directory
     recurse: true
+    owner: redis
+    group: redis
 
-- name: Add journaling config
-  copy:
-    src: 'journaling.conf'
-    dest: '/etc/redis/conf.d/journaling.conf'
-
-- name: Enable redis persistence
-  lineinfile:
-    dest: /etc/redis/redis.conf
-    regexp: '^include /etc/redis/conf.d/journaling.conf'
-    line: 'include /etc/redis/conf.d/journaling.conf'
-    state: "{{ 'present' if redis_enable_persistence == true else 'absent' }}"
+- name: Add redis config
+  template:
+    src: 'redis.conf'
+    dest: '/etc/redis/redis.conf'
+    owner: redis
+    group: redis
+    mode: 0600
 
 - name: Schedule background append rewriting
   cron:
@@ -31,3 +31,9 @@
     cron_file: 'redis'
     job: '/usr/bin/redis-cli bgrewriteaof > /dev/null 2>&1'
   when: redis_scheduled_rewriting
+
+- name: Set startup settings and start redis-server
+  service:
+    name: redis-server
+    state: started
+    enabled: "{{ redis_enabled_on_startup }}"

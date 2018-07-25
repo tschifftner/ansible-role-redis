@@ -2,5 +2,8 @@
 - hosts: localhost
   remote_user: root
 
+  vars:
+    redis_bind: '127.0.0.1' # ipv4 required for ubuntu 1804 testing
+
   roles:
-    - ansible-role-redis
+    - role_under_test
